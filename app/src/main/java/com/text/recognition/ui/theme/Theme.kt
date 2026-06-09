@@ -1,4 +1,4 @@
-package com.example.scan.ui.theme
+package com.text.recognition.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme

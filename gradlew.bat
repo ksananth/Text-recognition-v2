@@ -16,7 +16,6 @@ if "%DIRNAME%"=="" set DIRNAME=.
 set APP_BASE_NAME=%~n0
 set APP_HOME=%DIRNAME%
 
-set GRADLE_OPTS=%GRADLE_OPTS% "-Xdock:name=%APP_BASE_NAME%" "-Xdock:icon=%APP_HOME%/media/gradle.icns"
 
 set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
 
