@@ -33,6 +33,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -58,7 +59,7 @@ internal fun ScanCardScreen(
     onEvent: (ScanCardScreenEvents) -> Unit,
     viewModel: ScanCardViewModel = koinViewModel(),
 ) {
-    val currentActivity = androidx.activity.compose.LocalActivity.current
+    val currentActivity = LocalContext.current as? Activity
 
     val cameraError by viewModel.cameraError.collectAsState()
     val imageAnalyzer = remember {
@@ -106,12 +107,10 @@ internal fun ScanCardScreen(
 }
 
 private fun Activity.goToSettings() {
-    val packageName = packageName
-    val intent = Intent(action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-    intent.addFlags(flags = Intent.FLAG_ACTIVITY_NEW_TASK)
-    val uri = Uri.fromParts(scheme = "package", ssp = packageName, fragment = null)
-    intent.data = uri
-    startActivity(intent)
+    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        setData(Uri.fromParts("package", packageName, null))
+    })
 }
 
 private const val OCR_TIMER_DURATION: Long = 10000
