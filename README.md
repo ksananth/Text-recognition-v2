@@ -1,1 +1,1 @@
-# Text-recognition-v2
+# ML Kit - Text-recognition-v2

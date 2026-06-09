@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\ananthks\\\\StudioProjects\\\\Scan\" -Force)"
+    ]
+  }
+}
