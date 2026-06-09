@@ -84,7 +84,6 @@ internal fun ScanCardScreen(
             ) {
                 CardScannerScreenContent(
                     imageAnalyzer = imageAnalyzer,
-                    onEnterDetailsClicked = { onEvent(ScanCardScreenEvents.OnBackRequested) },
                     onRationalPositiveClicked = { onEvent(ScanCardScreenEvents.OnBackRequested) },
                     onRationalNegativeClicked = {
                         onEvent(ScanCardScreenEvents.OnBackRequested)
@@ -119,9 +118,8 @@ private const val OCR_TIMER_DURATION: Long = 10000
 @Composable
 internal fun CardScannerScreenContent(
     imageAnalyzer: Analyzer,
-    onEnterDetailsClicked: () -> Unit,
     onRationalPositiveClicked: () -> Unit,
-    onRationalNegativeClicked: () -> Unit
+    onRationalNegativeClicked: () -> Unit,
 ) {
     val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
 
@@ -129,7 +127,6 @@ internal fun CardScannerScreenContent(
         permissionState.status.isGranted -> {
             CardScanner(
                 imageAnalyzer = imageAnalyzer,
-                onEnterDetailsClicked = onEnterDetailsClicked
             )
         }
 
@@ -164,7 +161,6 @@ internal fun CardScannerScreenContent(
 @Composable
 internal fun CardScanner(
     imageAnalyzer: Analyzer,
-    onEnterDetailsClicked: () -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraExecutor = remember(calculation = Executors::newSingleThreadExecutor)
@@ -198,11 +194,7 @@ internal fun CardScanner(
     if (showTimeoutDialog) {
         ScanCardTimeoutDialog(
             onDismissed = { showTimeoutDialog = false },
-            onEnterDetailsClicked = {
-                showTimeoutDialog = false
-                onEnterDetailsClicked()
-            },
-            onScanDebitCardClicked = { showTimeoutDialog = false }
+            onRetry = { showTimeoutDialog = false }
         )
     }
 }
@@ -210,8 +202,7 @@ internal fun CardScanner(
 @Composable
 internal fun ScanCardTimeoutDialog(
     onDismissed: () -> Unit,
-    onEnterDetailsClicked: () -> Unit,
-    onScanDebitCardClicked: () -> Unit
+    onRetry: () -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDismissed,
@@ -234,21 +225,16 @@ internal fun ScanCardTimeoutDialog(
                 contentDescription = ""
             )
             Text(
-                text = "Hold your device in a vertical position (portrait mode) and align your card within the frame.",
+                text = "Having trouble scanning? Make sure the card is well-lit and fully visible.",
                 modifier = Modifier.padding(all = 24.dp),
                 style = MaterialTheme.typography.bodyMedium.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             )
-            Column(
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-            ) {
-                DialogButton(text = "Scan my debit card", onClick = onScanDebitCardClicked)
-                DialogButton(text = "Enter my details", onClick = onEnterDetailsClicked)
-            }
+            DialogButton(
+                text = "Retry",
+                onClick = onRetry,
+            )
         }
     }
 }
@@ -258,5 +244,5 @@ internal fun ScanCardTimeoutDialog(
 private fun Preview(
     @PreviewParameter(provider = DarkModeProvider::class) darkMode: Boolean
 ) = ScanTheme(darkTheme = darkMode) {
-    ScanCardTimeoutDialog(onDismissed = {}, onEnterDetailsClicked = {}, onScanDebitCardClicked = {})
+    ScanCardTimeoutDialog(onDismissed = {}, onRetry = {})
 }
